@@ -2,8 +2,8 @@
 
 clc, clear
 
-width = 2;
-height = 2;
+width = 4;
+height = 4;
 num_points0 = (1+2*width)*(1+2*height);
     points0 = zeros(num_points0, 2);
     for i = 1:num_points0
@@ -43,7 +43,7 @@ num_points0 = (1+2*width)*(1+2*height);
     pointsD(1:2*width, :) = [1:2:4*width-1; zeros(1, 2*width)]';
     
     % we first construct the faces in the first row
-    rotation = repmat([0; -1], width, 1);
+    rotation = repmat([-1; 0], width, 1);
     for i=1:2*width
         added_points_ind = 2*width+(2*i+1):-1:2*width+(2*i-1);
         facesD(i,:) = [i, added_points_ind];
@@ -63,7 +63,7 @@ num_points0 = (1+2*width)*(1+2*height);
         for j=1:2*width % add 2*width faces to facesD
             count = count+1;
             facesD(count, :) = [hill_points(j), hill_points(j)+num_M+1:-1:hill_points(j)+num_M-1];
-            Dto0(facesD(count,:)) = circshift(faces0(count, :), rotation(i));
+            Dto0(facesD(count,:)) = circshift(faces0(count, :), rotation(j));
         end
     end
 
