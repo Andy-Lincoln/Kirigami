@@ -2,8 +2,8 @@
 
 clc, clear
 
-width = 3;
-height = 3;
+width = 2;
+height = 2;
 num_points0 = (1+2*width)*(1+2*height);
     points0 = zeros(num_points0, 2);
     for i = 1:num_points0
@@ -43,7 +43,7 @@ num_points0 = (1+2*width)*(1+2*height);
     pointsD(1:2*width, :) = [1:2:4*width-1; zeros(1, 2*width)]';
     
     % we first construct the faces in the first row
-    rotation = repmat([0; 1], width, 1);
+    rotation = repmat([0; -1], width, 1);
     for i=1:2*width
         added_points_ind = 2*width+(2*i+1):-1:2*width+(2*i-1);
         facesD(i,:) = [i, added_points_ind];
@@ -51,18 +51,32 @@ num_points0 = (1+2*width)*(1+2*height);
         pointsD(added_points_ind,:) = [2*i, 1; 2*i-1, 2; 2*i-2, 1];
         Dto0(facesD(i,:)) = circshift(faces0(i, :), rotation(i));
     end
+    count = 2*width; % count the number of facesD constructed
     
-    for i = 2:2*height
+    num_M = 2*width + (2*width+1);
+    start = 2*width+1;
+    for i = 1:2*height-1 % add 2*width+(2*width+1) points for each "M"
+        rotation = -1*ones(2*width, 1)-rotation;
+        hill_points = facesD(1+(i-1)*2*width:i*2*width, 3);
+        added_points_ind = start+i*num_M :1: start+(i+1)*num_M-1;
+        pointsD(added_points_ind, :) = pointsD(added_points_ind-num_M, :)+[zeros(num_M, 1) 2*ones(num_M, 1)];
+        for j=1:2*width % add 2*width faces to facesD
+            count = count+1;
+            facesD(count, :) = [hill_points(j), hill_points(j)+num_M+1:-1:hill_points(j)+num_M-1];
+            Dto0(facesD(count,:)) = circshift(faces0(count, :), rotation(i));
+        end
+    end
+
         
 
 
-    % figure(2)
-    % clf
-    % hold on
-    % axis equal
-    % axis off
-    % plot_faces_generic(pointsD(1:19, :), {facesD(1:6, :)}, 2);  
-    % 
+    figure(2)
+    clf
+    hold on
+    axis equal
+    axis off
+    plot_faces_generic(pointsD, {facesD}, 2);  
+    
 
 
     % rotation = repmat([1; 0], width, 1); % for constructing map between points0 and pointsD----Dto0
