@@ -39,39 +39,65 @@ num_points0 = (1+2*width)*(1+2*height);
     Dto0 = zeros(num_pointsD, 1);
     
     facesD = zeros(num_faces, 4);
-    rotation = repmat([1; 0], width, 1); % for constructing map between points0 and pointsD----Dto0
 
-    facesD(1,:) = [1, 2, 3, 4];
-    pointsD(1:4, :) = [0 1; 1 0; 2 1; 1 2;];
-    Dto0(1:4) = circshift(faces0(1,:), 1);
-    count = 4; % count the number of pointsD constructed
-
-    % we first construct the first row of deployed state
-    for i=2:2*width
-        %center = [2*i-1, 1];
-        added_vertices = [2*i-1 0; 2*i 1; 2*i-1 2];
-        pointsD(count+1: count+3, :) = added_vertices;
-        facesD(i, :) = [3*(i-1) count+1:count+3];
-        count = count + 3;
-        Dto0(facesD(i, :)) = circshift(faces0(i, :), rotation(i));
+    pointsD(1:2*width, :) = [1:2:4*width-1; zeros(1, 2*width)]';
+    
+    % we first construct the faces in the first row
+    rotation = repmat([0; 1], width, 1);
+    for i=1:2*width
+        added_points_ind = 2*width+(2*i+1):-1:2*width+(2*i-1);
+        facesD(i,:) = [i, added_points_ind];
+        center = [2*i-1, 1];
+        pointsD(added_points_ind,:) = [2*i, 1; 2*i-1, 2; 2*i-2, 1];
+        Dto0(facesD(i,:)) = circshift(faces0(i, :), rotation(i));
     end
-
-    for i = 2*width+1:num_faces
-        row = ceil(i/(2*width));
-        col = rem(i, 2*width);
-        if col == 0
-            col = 2*width;
-        end
-        center = [2*col-1, 2*row - 1];
-        if rem(i, 2*width) == 1
-            added_vertices = [2*col 2*row-1; 2*col-1 2*row; 2*col-2 2*row-1];
-            pointsD(count+1: count+3, :) = added_vertices;
-            facesD(i, :) = [lower_face(3) count+1:count+3];
+    
+    for i = 2:2*height
+        
 
 
-    figure(2)
-    clf
-    hold on
-    axis equal
-    axis off
-    plot_faces_generic(pointsD(1:19, :), {facesD(1:6, :)}, 2);   
+    % figure(2)
+    % clf
+    % hold on
+    % axis equal
+    % axis off
+    % plot_faces_generic(pointsD(1:19, :), {facesD(1:6, :)}, 2);  
+    % 
+
+
+    % rotation = repmat([1; 0], width, 1); % for constructing map between points0 and pointsD----Dto0
+
+    % facesD(1,:) = [1, 2, 3, 4];
+    % pointsD(1:4, :) = [0 1; 1 0; 2 1; 1 2;];
+    % Dto0(1:4) = circshift(faces0(1,:), 1);
+    % count = 4; % count the number of pointsD constructed
+    % 
+    % % we first construct the first row of deployed state
+    % for i=2:2*width
+    %     %center = [2*i-1, 1];
+    %     added_vertices = [2*i-1 0; 2*i 1; 2*i-1 2];
+    %     pointsD(count+1: count+3, :) = added_vertices;
+    %     facesD(i, :) = [3*(i-1) count+1:count+3];
+    %     count = count + 3;
+    %     Dto0(facesD(i, :)) = circshift(faces0(i, :), rotation(i));
+    % end
+    % 
+    % for i = 2*width+1:num_faces
+    %     row = ceil(i/(2*width));
+    %     col = rem(i, 2*width);
+    %     if col == 0
+    %         col = 2*width;
+    %     end
+    %     center = [2*col-1, 2*row - 1];
+    %     if rem(i, 2*width) == 1
+    %         added_vertices = [2*col 2*row-1; 2*col-1 2*row; 2*col-2 2*row-1];
+    %         pointsD(count+1: count+3, :) = added_vertices;
+    %         facesD(i, :) = [lower_face(3) count+1:count+3];
+    % 
+    % 
+    % figure(2)
+    % clf
+    % hold on
+    % axis equal
+    % axis off
+    % plot_faces_generic(pointsD(1:19, :), {facesD(1:6, :)}, 2);   
