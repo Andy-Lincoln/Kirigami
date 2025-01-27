@@ -93,14 +93,6 @@ end
 edge_pairsD = make_edge_pairs(edgesD, Dto0);
 
 % determine interior_rings: four angles in anglesD sum up to 2*pi
-
-% we first rearrange anglesD according to vertex of its corresponding initial
-% angle, which facilates finding int_rings and bdy_rings greatly thanks to
-% the order of points0 we constructed!
-angles0 = Dto0(anglesD);
-[angles0, ind] = sortrows(angles0);
-anglesD = anglesD(ind,:);
-
 [int_ringsD, anglesD] = make_dev_rings_generic(anglesD, Dto0);
 
 % determine boundary_rings: one angle = pi/2 or two angles sum up to pi
@@ -108,7 +100,6 @@ bdy_ptD = (1:num_pointsD)'; % pointsD locating on boundaries when the deployed p
 for i = 1:size(ringsD, 1)
     bdy_ptD = bdy_ptD(~ismember(bdy_ptD, anglesD(ringsD(i,1):ringsD(i,2), 1)));
 end
-
 
 
    
